@@ -12,11 +12,12 @@
   --surface-2:   #1f2437;
   --border:      #2a3050;
   --accent:      #4f8ef7;
-  --accent-dim:  #2a4a8a;
+  --accent-dim:  #1e3870;
   --rec:         #e84545;
-  --rec-dim:     #6b1f1f;
+  --rec-dim:     #3a1010;
   --pause:       #f0a030;
   --ok:          #35c97a;
+  --ok-dim:      #0d3020;
   --muted:       #5a627a;
   --text:        #dde3f7;
   --text-2:      #8898bb;
@@ -29,9 +30,7 @@
   --shadow:      0 4px 24px rgba(0,0,0,.45);
 }
 
-/* ─── Reset ─── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 html { font-size: 16px; }
 
 body {
@@ -58,7 +57,7 @@ body {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding-bottom: 4px;
+  padding-bottom: 16px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -84,6 +83,31 @@ body {
   margin-top: 1px;
 }
 
+/* ─── Instruction Banner ─── */
+.instruction-banner {
+  background: linear-gradient(135deg, #1a2540 0%, #1f2e52 100%);
+  border: 1px solid #2d4080;
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  font-size: .85rem;
+  line-height: 1.6;
+  color: var(--text-2);
+}
+
+.instruction-banner strong {
+  color: var(--accent);
+  display: block;
+  margin-bottom: 6px;
+  font-size: .9rem;
+}
+
+.instruction-banner ol {
+  padding-left: 18px;
+  color: var(--text-2);
+}
+
+.instruction-banner ol li { margin-bottom: 2px; }
+
 /* ─── Cards ─── */
 .card {
   background: var(--surface);
@@ -102,7 +126,119 @@ body {
   margin-bottom: 14px;
 }
 
-/* ─── Status badge ─── */
+/* ─── Modal overlay ─── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+  backdrop-filter: blur(4px);
+}
+
+.modal-overlay.hidden { display: none; }
+
+.modal-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,.7);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-box h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.modal-box p {
+  font-size: .82rem;
+  color: var(--text-2);
+  line-height: 1.55;
+}
+
+.source-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.source-btn {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: var(--surface-2);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color .2s, background .2s;
+  width: 100%;
+  font-family: var(--font-ui);
+  color: var(--text);
+}
+
+.source-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.source-btn .source-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.source-btn .source-title {
+  font-weight: 700;
+  font-size: .92rem;
+  margin-bottom: 3px;
+  display: block;
+}
+
+.source-btn .source-desc {
+  font-size: .78rem;
+  color: var(--text-2);
+  line-height: 1.5;
+  display: block;
+}
+
+.source-btn .source-note {
+  font-size: .72rem;
+  color: var(--accent);
+  margin-top: 5px;
+  display: block;
+  font-weight: 600;
+}
+
+.modal-cancel {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: var(--font-ui);
+  font-size: .82rem;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  align-self: flex-end;
+  transition: color .15s, border-color .15s;
+}
+
+.modal-cancel:hover { color: var(--text); border-color: var(--text-2); }
+
+/* ─── Status row ─── */
 .status-row {
   display: flex;
   align-items: center;
@@ -126,29 +262,24 @@ body {
   transition: background .25s, color .25s, border-color .25s;
 }
 
-#status-badge.recording {
-  background: var(--rec-dim);
-  color: var(--rec);
-  border-color: var(--rec);
-}
-
-#status-badge.paused {
-  background: #3a2a00;
-  color: var(--pause);
-  border-color: var(--pause);
-}
-
-#status-badge.stopped {
-  background: var(--surface-2);
-  color: var(--text-2);
-  border-color: var(--border);
-}
+#status-badge.recording { background: var(--rec-dim); color: var(--rec); border-color: var(--rec); }
+#status-badge.paused    { background: #3a2a00; color: var(--pause); border-color: var(--pause); }
+#status-badge.stopped   { background: var(--surface-2); color: var(--text-2); border-color: var(--border); }
 
 .status-dot {
   width: 8px; height: 8px;
   border-radius: 50%;
   background: currentColor;
   flex-shrink: 0;
+}
+
+#status-badge.recording .status-dot {
+  animation: pulse-dot 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .35; }
 }
 
 /* ─── Timer ─── */
@@ -161,12 +292,68 @@ body {
   min-width: 100px;
 }
 
+/* ─── Info pills row ─── */
+.info-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+  min-height: 26px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .72rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 99px;
+  letter-spacing: .04em;
+}
+
+.pill-source {
+  background: var(--ok-dim);
+  color: var(--ok);
+  border: 1px solid #1c5038;
+}
+
+.pill-source.tab {
+  background: #1a2a50;
+  color: #7ab0ff;
+  border: 1px solid #2a4080;
+}
+
+.pill-source.error {
+  background: var(--rec-dim);
+  color: var(--rec);
+  border: 1px solid #5a1818;
+}
+
+.pill-transcription {
+  background: var(--surface-2);
+  color: var(--text-2);
+  border: 1px solid var(--border);
+}
+
+.pill-transcription.active {
+  background: var(--ok-dim);
+  color: var(--ok);
+  border: 1px solid #1c5038;
+}
+
+.pill-transcription.error {
+  background: #3a2a00;
+  color: var(--pause);
+  border: 1px solid #604000;
+}
+
 /* ─── Controls ─── */
 .controls {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 6px;
+  margin-bottom: 10px;
 }
 
 button {
@@ -186,74 +373,50 @@ button {
   user-select: none;
 }
 
-button:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 button:active { transform: scale(.96); }
 button:disabled { opacity: .35; cursor: not-allowed; transform: none; }
 
-.btn-start  { background: var(--ok);   color: #0a1a12; }
-.btn-pause  { background: var(--pause); color: #1a0f00; }
-.btn-resume { background: var(--accent); color: #fff; }
-.btn-stop   { background: var(--rec); color: #fff; }
-.btn-secondary {
-  background: var(--surface-2);
-  color: var(--text);
-  border: 1px solid var(--border);
-}
+.btn-start   { background: var(--ok);   color: #071a0e; }
+.btn-pause   { background: var(--pause); color: #1a0f00; }
+.btn-resume  { background: var(--accent); color: #fff; }
+.btn-stop    { background: var(--rec); color: #fff; }
+.btn-secondary { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
 .btn-secondary:hover:not(:disabled) { background: var(--border); }
-.btn-accent { background: var(--accent); color: #fff; }
-.btn-accent:hover:not(:disabled) { filter: brightness(1.1); }
-.btn-danger { background: var(--rec-dim); color: var(--rec); border: 1px solid var(--rec); }
+.btn-accent  { background: var(--accent); color: #fff; }
+.btn-accent:hover:not(:disabled) { filter: brightness(1.15); }
+.btn-danger  { background: var(--rec-dim); color: var(--rec); border: 1px solid #5a1818; }
 .btn-danger:hover:not(:disabled) { background: var(--rec); color: #fff; }
 
-/* ─── Permission / error messages ─── */
-#mic-status {
-  font-size: .8rem;
-  padding: 8px 14px;
+/* ─── Messages ─── */
+#recorder-message {
+  font-size: .82rem;
+  padding: 10px 14px;
   border-radius: var(--radius);
-  background: var(--surface-2);
-  color: var(--text-2);
   border: 1px solid var(--border);
   display: none;
+  line-height: 1.5;
+  margin-top: 6px;
 }
 
-#mic-status.visible { display: block; }
-#mic-status.error   { color: var(--rec); border-color: var(--rec-dim); background: var(--rec-dim); }
-#mic-status.warn    { color: var(--pause); border-color: #3a2a00; background: #3a2a00; }
-#mic-status.ok      { color: var(--ok); border-color: #0a3020; background: #0a3020; }
+#recorder-message.visible { display: block; }
+#recorder-message.error   { color: var(--rec);   border-color: #5a1818; background: var(--rec-dim); }
+#recorder-message.warn    { color: var(--pause);  border-color: #604000; background: #1f1500; }
+#recorder-message.ok      { color: var(--ok);    border-color: #1c5038; background: var(--ok-dim); }
+#recorder-message.info    { color: var(--text-2); border-color: var(--border); background: var(--surface-2); }
 
-/* ─── Transcription status ─── */
-#transcription-status {
-  font-size: .75rem;
-  color: var(--text-2);
-  padding: 4px 10px;
-  border-radius: var(--radius);
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-#transcription-status.active  { color: var(--ok); border-color: #0a3020; background: #0a3020; }
-#transcription-status.error   { color: var(--rec); border-color: var(--rec-dim); background: var(--rec-dim); }
-#transcription-status.unsupported { color: var(--pause); }
-
-/* ─── Captions / Transcript areas ─── */
+/* ─── Captions / Transcript ─── */
 .captions-area, .transcript-area {
   background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 16px;
   min-height: 140px;
-  max-height: 320px;
+  max-height: 300px;
   overflow-y: auto;
   font-family: var(--font-ui);
-  font-size: var(--captions-size, 1.05rem);
-  line-height: 1.7;
+  font-size: 1.05rem;
+  line-height: 1.75;
   scroll-behavior: smooth;
   word-break: break-word;
 }
@@ -263,63 +426,42 @@ button:disabled { opacity: .35; cursor: not-allowed; transform: none; }
   font-style: italic;
   text-align: center;
   padding-top: 30px;
+  font-size: .9rem;
 }
 
-#interim-text {
-  color: var(--interim);
-  font-style: italic;
-}
+#interim-text { color: var(--interim); font-style: italic; }
 
-.transcript-segment {
-  margin-bottom: 4px;
-}
+.transcript-segment { margin-bottom: 4px; }
 
 .ts-time {
   font-family: var(--font-mono);
   font-size: .75em;
   color: var(--muted);
   margin-right: 6px;
-  flex-shrink: 0;
 }
 
 .ts-text { color: var(--final); }
 
-/* ─── Transcript card controls ─── */
+/* ─── Transcript controls ─── */
 .transcript-controls {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
   margin-top: 12px;
+  align-items: center;
 }
 
-/* ─── Clipboard feedback ─── */
 #copy-feedback {
   font-size: .78rem;
   color: var(--ok);
   opacity: 0;
   transition: opacity .3s;
-  align-self: center;
-  white-space: nowrap;
 }
 
 #copy-feedback.show { opacity: 1; }
 
 /* ─── Audio player ─── */
-#audio-player-wrap {
-  display: none;
-  flex-direction: column;
-  gap: 10px;
-}
-
-#audio-player-wrap.visible { display: flex; }
-
-#audio-player {
-  width: 100%;
-  accent-color: var(--accent);
-  outline: none;
-}
-
-#audio-player:focus-visible { outline: 2px solid var(--accent); }
+#audio-player { width: 100%; accent-color: var(--accent); }
 
 /* ─── Settings ─── */
 .settings-grid {
@@ -328,11 +470,7 @@ button:disabled { opacity: .35; cursor: not-allowed; transform: none; }
   gap: 14px;
 }
 
-.setting-item {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
+.setting-item { display: flex; flex-direction: column; gap: 5px; }
 
 .setting-label {
   font-size: .75rem;
@@ -354,23 +492,12 @@ select, input[type="range"] {
   cursor: pointer;
 }
 
-select:focus-visible, input[type="range"]:focus-visible {
-  outline: 2px solid var(--accent);
-}
+select:focus-visible, input[type="range"]:focus-visible { outline: 2px solid var(--accent); }
 
-.toggle-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+.toggle-row { display: flex; align-items: center; gap: 10px; }
 
-/* iOS-style toggle */
-.toggle {
-  position: relative; width: 40px; height: 22px; flex-shrink: 0;
-}
-
+.toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
 .toggle input { display: none; }
-
 .toggle .knob {
   position: absolute; inset: 0;
   background: var(--border);
@@ -378,7 +505,6 @@ select:focus-visible, input[type="range"]:focus-visible {
   cursor: pointer;
   transition: background .2s;
 }
-
 .toggle .knob::after {
   content: '';
   position: absolute;
@@ -388,11 +514,10 @@ select:focus-visible, input[type="range"]:focus-visible {
   top: 3px; left: 3px;
   transition: transform .2s;
 }
-
 .toggle input:checked + .knob { background: var(--accent); }
 .toggle input:checked + .knob::after { transform: translateX(18px); }
 
-/* ─── Notice bar ─── */
+/* ─── Notice ─── */
 .notice {
   font-size: .8rem;
   color: var(--text-2);
@@ -400,20 +525,57 @@ select:focus-visible, input[type="range"]:focus-visible {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 10px 14px;
-  margin-top: 6px;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
-/* ─── Privacy notice ─── */
-.privacy {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
+.notice + .notice { margin-top: 8px; }
+
+/* ─── Diagnostics ─── */
+details.diagnostics-panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+details.diagnostics-panel summary {
   font-size: .78rem;
+  font-weight: 700;
   color: var(--muted);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 10px 14px;
+  cursor: pointer;
+  background: var(--surface-2);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
 }
 
-.privacy svg { flex-shrink: 0; margin-top: 1px; }
+details.diagnostics-panel summary::before {
+  content: '▶';
+  font-size: .65rem;
+  transition: transform .2s;
+  flex-shrink: 0;
+}
+
+details[open].diagnostics-panel summary::before { transform: rotate(90deg); }
+
+.diag-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 20px;
+  padding: 14px;
+  font-size: .75rem;
+  font-family: var(--font-mono);
+}
+
+.diag-row { display: contents; }
+.diag-key { color: var(--text-2); }
+.diag-val { color: var(--text); }
+.diag-val.yes { color: var(--ok); }
+.diag-val.no  { color: var(--rec); }
 
 /* ─── Scrollbar ─── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -423,19 +585,58 @@ select:focus-visible, input[type="range"]:focus-visible {
 /* ─── Responsive ─── */
 @media (max-width: 600px) {
   .app-wrap { padding: 14px 12px 50px; gap: 14px; }
-  .card { padding: 16px 16px; }
+  .card { padding: 16px; }
   #timer-display { font-size: 1.2rem; }
   button { padding: 9px 14px; font-size: .8rem; }
-  .captions-area, .transcript-area { max-height: 220px; }
+  .captions-area, .transcript-area { max-height: 200px; }
+  .modal-box { padding: 20px 16px; }
+  .diag-grid { grid-template-columns: 1fr; }
+  .diag-key { color: var(--muted); font-size: .68rem; }
 }
 
-/* ─── Reduced motion ─── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
 </style>
 </head>
 <body>
+
+<!-- ─── Audio Source Modal ─── -->
+<div class="modal-overlay hidden" id="source-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-box">
+    <div>
+      <h2 id="modal-title">🎛 Choose Audio Source</h2>
+      <p>Where is the audio coming from? Select the source before recording begins.</p>
+    </div>
+
+    <div class="source-options">
+      <button class="source-btn" id="source-mic" type="button">
+        <span class="source-icon">🎤</span>
+        <span>
+          <span class="source-title">Microphone</span>
+          <span class="source-desc">Use your computer's built-in or external microphone. Best when the teacher is physically in the room or speaking aloud near you.</span>
+          <span class="source-note">▶ Browser asks for microphone permission.</span>
+        </span>
+      </button>
+
+      <button class="source-btn" id="source-tab" type="button">
+        <span class="source-icon">🖥</span>
+        <span>
+          <span class="source-title">Browser Tab / Screen Audio</span>
+          <span class="source-desc">Capture the audio playing in a specific browser tab — for Zoom, Google Meet, Teams, or any online class. The browser will open its native screen-sharing dialog. Select your class tab and <strong>enable "Share audio" / "Tab audio"</strong> before clicking Share.</span>
+          <span class="source-note">▶ Browser screen-share picker will open. You must select your class tab and enable Share audio.</span>
+        </span>
+      </button>
+    </div>
+
+    <div class="notice" style="font-size:.75rem;">
+      ⚠ This app cannot silently access any other tab. The browser requires you to explicitly choose the source and grant permission — this is a security requirement enforced by the browser, not this app.
+    </div>
+
+    <button class="modal-cancel" id="modal-cancel">Cancel</button>
+  </div>
+</div>
+
 <div class="app-wrap">
 
   <!-- ─── Header ─── -->
@@ -443,26 +644,26 @@ select:focus-visible, input[type="range"]:focus-visible {
     <div class="logo-mark" aria-hidden="true">🎙</div>
     <div>
       <h1>Lecture Recorder</h1>
-      <p>Live captions · Audio download · Transcript export</p>
+      <p>Live captions · Audio capture · Transcript export</p>
     </div>
   </header>
 
-  <!-- ─── Privacy notice ─── -->
-  <div class="card notice privacy">
-    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M12 11c0-1.1.9-2 2-2h.5a2.5 2.5 0 0 1 0 5H14a2 2 0 0 1-2-2zm0 0v4m0-8V7m9 5a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/>
-    </svg>
-    <span>
-      <strong>Your privacy:</strong> This app uses your microphone only to record locally in your browser.
-      No audio or transcript data is uploaded to any server. Everything stays on your device.
-    </span>
+  <!-- ─── Instruction banner ─── -->
+  <div class="instruction-banner">
+    <strong>📡 For online classes (Zoom, Meet, Teams in a browser tab):</strong>
+    <ol>
+      <li>Click <strong>Start Recording</strong></li>
+      <li>Choose <strong>Browser Tab / Screen Audio</strong></li>
+      <li>Select your <strong>class tab</strong> in the browser picker that opens</li>
+      <li>Enable <strong>"Share audio"</strong> (checkbox in the picker — required!)</li>
+      <li>Click <strong>Share</strong> — recording begins immediately</li>
+    </ol>
   </div>
 
   <!-- ─── Recorder controls ─── -->
   <section class="card" aria-label="Recording controls">
     <div class="card-title">Recording</div>
 
-    <!-- Status row -->
     <div class="status-row">
       <span id="status-badge" class="stopped" aria-live="polite" aria-atomic="true">
         <span class="status-dot" aria-hidden="true"></span>
@@ -471,37 +672,37 @@ select:focus-visible, input[type="range"]:focus-visible {
       <span id="timer-display" role="timer" aria-label="Recording time">00:00:00</span>
     </div>
 
-    <!-- Buttons -->
+    <!-- Source & transcription pills -->
+    <div class="info-pills" id="info-pills" aria-live="polite">
+      <!-- populated by JS -->
+    </div>
+
     <div class="controls" role="group" aria-label="Recorder buttons">
-      <button id="btn-start" class="btn-start" aria-label="Start recording">
+      <button id="btn-start" class="btn-start">
         <span aria-hidden="true">▶</span> Start Recording
       </button>
-      <button id="btn-pause" class="btn-pause" disabled aria-label="Pause recording">
+      <button id="btn-pause" class="btn-pause" disabled>
         <span aria-hidden="true">⏸</span> Pause
       </button>
-      <button id="btn-resume" class="btn-resume" disabled aria-label="Resume recording" style="display:none">
+      <button id="btn-resume" class="btn-resume" disabled style="display:none">
         <span aria-hidden="true">▶</span> Resume
       </button>
-      <button id="btn-stop" class="btn-stop" disabled aria-label="Stop recording">
+      <button id="btn-stop" class="btn-stop" disabled>
         <span aria-hidden="true">⏹</span> Stop
       </button>
     </div>
 
-    <!-- Mic status -->
-    <div id="mic-status" role="alert" aria-live="assertive"></div>
-
-    <!-- Transcription status -->
-    <div style="margin-top:10px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-      <span id="transcription-status" aria-live="polite">
-        <span aria-hidden="true">⬤</span> Transcription ready
-      </span>
-    </div>
+    <div id="recorder-message" role="alert" aria-live="assertive"></div>
   </section>
+
+  <!-- ─── Transcription notice ─── -->
+  <div class="notice" id="transcription-notice" style="display:none;">
+    <!-- populated by JS -->
+  </div>
 
   <!-- ─── Live captions ─── -->
   <section class="card" aria-label="Live captions">
-    <div class="card-title">Live Captions</div>
-
+    <div class="card-title">Live Caption</div>
     <div
       id="captions-box"
       class="captions-area"
@@ -517,7 +718,6 @@ select:focus-visible, input[type="range"]:focus-visible {
   <!-- ─── Full transcript ─── -->
   <section class="card" aria-label="Full transcript">
     <div class="card-title">Full Transcript</div>
-
     <div
       id="transcript-box"
       class="transcript-area"
@@ -526,31 +726,22 @@ select:focus-visible, input[type="range"]:focus-visible {
       aria-label="Final transcript"
       tabindex="0"
     >
-      <p class="transcript-empty" id="transcript-empty">Your finalized transcript will appear here.</p>
+      <p class="transcript-empty" id="transcript-empty">Finalized transcript appears here.</p>
     </div>
-
     <div class="transcript-controls">
-      <button id="btn-copy" class="btn-secondary" disabled aria-label="Copy transcript to clipboard">
-        <span aria-hidden="true">📋</span> Copy
-      </button>
-      <button id="btn-download-txt" class="btn-secondary" disabled aria-label="Download transcript as text file">
-        <span aria-hidden="true">⬇</span> Download .txt
-      </button>
-      <button id="btn-clear" class="btn-danger" disabled aria-label="Clear transcript">
-        <span aria-hidden="true">🗑</span> Clear
-      </button>
+      <button id="btn-copy" class="btn-secondary" disabled>📋 Copy</button>
+      <button id="btn-download-txt" class="btn-secondary" disabled>⬇ Download .txt</button>
+      <button id="btn-clear" class="btn-danger" disabled>🗑 Clear</button>
       <span id="copy-feedback" aria-live="polite">✓ Copied!</span>
     </div>
   </section>
 
   <!-- ─── Audio playback ─── -->
-  <section class="card" aria-label="Audio playback" id="playback-section" style="display:none">
+  <section class="card" id="playback-section" style="display:none" aria-label="Audio playback">
     <div class="card-title">Playback</div>
-    <div id="audio-player-wrap" class="visible">
+    <div style="display:flex; flex-direction:column; gap:10px;">
       <audio id="audio-player" controls aria-label="Recorded lecture audio"></audio>
-      <button id="btn-download-audio" class="btn-accent" aria-label="Download audio recording">
-        <span aria-hidden="true">⬇</span> Download Audio
-      </button>
+      <button id="btn-download-audio" class="btn-accent">⬇ Download Audio</button>
     </div>
   </section>
 
@@ -558,10 +749,9 @@ select:focus-visible, input[type="range"]:focus-visible {
   <section class="card" aria-label="Settings">
     <div class="card-title">Settings</div>
     <div class="settings-grid">
-
       <div class="setting-item">
-        <label class="setting-label" for="lang-select">Language</label>
-        <select id="lang-select" aria-label="Recognition language">
+        <label class="setting-label" for="lang-select">Transcription Language</label>
+        <select id="lang-select">
           <option value="en-US">English (US)</option>
           <option value="en-GB">English (UK)</option>
           <option value="es-ES">Spanish</option>
@@ -573,78 +763,71 @@ select:focus-visible, input[type="range"]:focus-visible {
           <option value="ja-JP">Japanese</option>
         </select>
       </div>
-
       <div class="setting-item">
         <label class="setting-label" for="font-size-range">Caption Font Size</label>
         <div style="display:flex; align-items:center; gap:8px;">
-          <input
-            type="range" id="font-size-range"
-            min="0.85" max="1.6" step="0.05" value="1.05"
-            aria-label="Caption font size"
-          >
+          <input type="range" id="font-size-range" min="0.85" max="1.6" step="0.05" value="1.05">
           <span id="font-size-label" style="font-size:.8rem; color:var(--text-2); min-width:36px;">1.05</span>
         </div>
       </div>
-
       <div class="setting-item">
         <span class="setting-label">Timestamps</span>
         <label class="toggle-row">
           <span class="toggle">
-            <input type="checkbox" id="toggle-timestamps" checked aria-label="Show timestamps in transcript">
+            <input type="checkbox" id="toggle-timestamps" checked>
             <span class="knob"></span>
           </span>
           <span style="font-size:.85rem; color:var(--text-2);">Show timestamps</span>
         </label>
       </div>
-
       <div class="setting-item">
         <span class="setting-label">Auto-scroll</span>
         <label class="toggle-row">
           <span class="toggle">
-            <input type="checkbox" id="toggle-autoscroll" checked aria-label="Auto-scroll captions">
+            <input type="checkbox" id="toggle-autoscroll" checked>
             <span class="knob"></span>
           </span>
           <span style="font-size:.85rem; color:var(--text-2);">Auto-scroll captions</span>
         </label>
       </div>
-
     </div>
 
-    <!-- Accuracy notice -->
     <div class="notice" style="margin-top:14px;">
-      ⚠️ <strong>Note:</strong> Browser speech recognition relies on cloud-based or OS-level APIs.
-      Accuracy varies by accent, background noise, and network conditions. Words may be misheard
-      and recognition may occasionally disconnect and reconnect — this is normal. Audio recording
-      continues regardless of transcription state.
+      ⚠ <strong>About live transcription:</strong> The browser's Web Speech API listens to the <em>microphone</em> — it does not automatically transcribe arbitrary captured tab audio.
+      When you record a browser tab for audio, you will hear the class in the recording, but <strong>live captions will come from your microphone</strong> (what the browser's recognition hears).
+      For accurate tab-audio transcription a backend speech-to-text API (e.g. Whisper, Google STT) would be required. Audio recording always works and is independent of transcription.
     </div>
+  </section>
+
+  <!-- ─── Diagnostics ─── -->
+  <section class="card" aria-label="Recording diagnostics">
+    <details class="diagnostics-panel" id="diagnostics-panel">
+      <summary>Recording Diagnostics</summary>
+      <div class="diag-grid" id="diag-grid">
+        <!-- populated by JS -->
+      </div>
+    </details>
   </section>
 
 </div><!-- /app-wrap -->
 
 <script>
-/* ==========================================================================
-   LECTURE RECORDER — COMPLETE CLIENT-SIDE IMPLEMENTATION
-   ─────────────────────────────────────────────────────
-   Architecture:
-     AudioRecorder  — wraps MediaRecorder + getUserMedia
-     Transcriber    — wraps SpeechRecognition with auto-restart
-     TranscriptStore — holds final text segments + timestamps
-     UI             — wires everything together, manages state
-   ========================================================================== */
-
 'use strict';
 
-/* ────────────────────────────────────────────────────────────────────────────
-   CONSTANTS & GLOBAL STATE
-   ──────────────────────────────────────────────────────────────────────────── */
+/* =========================================================================
+   CONSTANTS
+   ========================================================================= */
 
 const APP_STATE = { IDLE: 'idle', RECORDING: 'recording', PAUSED: 'paused', STOPPED: 'stopped' };
 let currentState = APP_STATE.IDLE;
 
+// Audio source type: 'microphone' | 'tab' | null
+let selectedSourceType = null;
+
 // Timer
 let timerInterval  = null;
-let timerStartTime = 0;   // epoch ms when current segment started
-let timerElapsed   = 0;   // ms accumulated before last pause
+let timerStartTime = 0;
+let timerElapsed   = 0;
 
 // Audio recording
 let mediaStream    = null;
@@ -652,21 +835,22 @@ let mediaRecorder  = null;
 let audioChunks    = [];
 let audioBlob      = null;
 let audioObjectURL = null;
+let mimeTypeUsed   = '';
 
 // Speech recognition
-let recognition          = null;
-let recogRunning         = false;
-let recogRestartTimeout  = null;
-let recogEnabled         = true;   // false if unsupported
+let recognition         = null;
+let recogRunning        = false;
+let recogRestartTimeout = null;
+let recogEnabled        = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 
-// Transcript data
-const transcriptSegments = [];  // { time: '00:00:00', text: string }
+// Transcript
+const transcriptSegments = [];
 
-/* ────────────────────────────────────────────────────────────────────────────
-   DOM REFERENCES
-   ──────────────────────────────────────────────────────────────────────────── */
+/* =========================================================================
+   DOM REFS
+   ========================================================================= */
 
-const $  = id => document.getElementById(id);
+const $ = id => document.getElementById(id);
 
 const btnStart         = $('btn-start');
 const btnPause         = $('btn-pause');
@@ -679,12 +863,10 @@ const btnDownloadAudio = $('btn-download-audio');
 const statusBadge      = $('status-badge');
 const statusLabel      = $('status-label');
 const timerDisplay     = $('timer-display');
-const micStatus        = $('mic-status');
-const transcriptionStatus = $('transcription-status');
+const recorderMessage  = $('recorder-message');
+const infoPills        = $('info-pills');
 const captionsBox      = $('captions-box');
-const captionsEmpty    = $('captions-empty');
 const transcriptBox    = $('transcript-box');
-const transcriptEmpty  = $('transcript-empty');
 const copyFeedback     = $('copy-feedback');
 const audioPlayer      = $('audio-player');
 const playbackSection  = $('playback-section');
@@ -693,23 +875,24 @@ const fontSizeRange    = $('font-size-range');
 const fontSizeLabel    = $('font-size-label');
 const toggleTimestamps = $('toggle-timestamps');
 const toggleAutoscroll = $('toggle-autoscroll');
+const sourceModal      = $('source-modal');
+const sourceMicBtn     = $('source-mic');
+const sourceTabBtn     = $('source-tab');
+const modalCancel      = $('modal-cancel');
+const transcriptionNotice = $('transcription-notice');
+const diagGrid         = $('diag-grid');
 
-/* ────────────────────────────────────────────────────────────────────────────
-   SETTINGS — persist harmless UI prefs via localStorage
-   ──────────────────────────────────────────────────────────────────────────── */
+/* =========================================================================
+   SETTINGS
+   ========================================================================= */
 
 function loadSettings() {
   const lang = localStorage.getItem('lr_lang');
   if (lang) langSelect.value = lang;
-
   const fs = localStorage.getItem('lr_fontsize');
   if (fs) { fontSizeRange.value = fs; applyFontSize(fs); }
-
-  const ts = localStorage.getItem('lr_timestamps');
-  toggleTimestamps.checked = ts !== 'false';
-
-  const as_ = localStorage.getItem('lr_autoscroll');
-  toggleAutoscroll.checked = as_ !== 'false';
+  toggleTimestamps.checked = localStorage.getItem('lr_timestamps') !== 'false';
+  toggleAutoscroll.checked = localStorage.getItem('lr_autoscroll') !== 'false';
 }
 
 function saveSettings() {
@@ -720,24 +903,25 @@ function saveSettings() {
 }
 
 function applyFontSize(val) {
-  captionsBox.style.setProperty('--captions-size', val + 'rem');
-  transcriptBox.style.setProperty('--captions-size', val + 'rem');
-  captionsBox.style.fontSize = val + 'rem';
+  captionsBox.style.fontSize   = val + 'rem';
   transcriptBox.style.fontSize = val + 'rem';
-  fontSizeLabel.textContent = parseFloat(val).toFixed(2);
+  fontSizeLabel.textContent    = parseFloat(val).toFixed(2);
 }
 
-langSelect.addEventListener('change',       saveSettings);
+langSelect.addEventListener('change', () => {
+  saveSettings();
+  if (currentState === APP_STATE.RECORDING && recogEnabled) {
+    stopRecognition();
+    startRecognition();
+  }
+});
 toggleTimestamps.addEventListener('change', saveSettings);
 toggleAutoscroll.addEventListener('change', saveSettings);
-fontSizeRange.addEventListener('input', e => {
-  applyFontSize(e.target.value);
-  saveSettings();
-});
+fontSizeRange.addEventListener('input', e => { applyFontSize(e.target.value); saveSettings(); });
 
-/* ────────────────────────────────────────────────────────────────────────────
-   TIMER HELPERS
-   ──────────────────────────────────────────────────────────────────────────── */
+/* =========================================================================
+   TIMER
+   ========================================================================= */
 
 function formatTime(ms) {
   const total = Math.floor(ms / 1000);
@@ -748,21 +932,16 @@ function formatTime(ms) {
 }
 
 function getElapsedMs() {
-  if (currentState === APP_STATE.RECORDING) {
-    return timerElapsed + (Date.now() - timerStartTime);
-  }
-  return timerElapsed;
+  return currentState === APP_STATE.RECORDING
+    ? timerElapsed + (Date.now() - timerStartTime)
+    : timerElapsed;
 }
 
-function getCurrentTimestamp() {
-  return formatTime(getElapsedMs());
-}
+function getCurrentTimestamp() { return formatTime(getElapsedMs()); }
 
 function startTimer() {
   timerStartTime = Date.now();
-  timerInterval = setInterval(() => {
-    timerDisplay.textContent = formatTime(getElapsedMs());
-  }, 500);
+  timerInterval = setInterval(() => { timerDisplay.textContent = formatTime(getElapsedMs()); }, 500);
 }
 
 function pauseTimer() {
@@ -771,292 +950,478 @@ function pauseTimer() {
   timerElapsed += Date.now() - timerStartTime;
 }
 
-function stopTimer() {
-  clearInterval(timerInterval);
-  timerInterval = null;
-}
+function stopTimer() { clearInterval(timerInterval); timerInterval = null; }
 
 function resetTimer() {
   stopTimer();
-  timerElapsed   = 0;
-  timerStartTime = 0;
+  timerElapsed = timerStartTime = 0;
   timerDisplay.textContent = '00:00:00';
 }
 
-/* ────────────────────────────────────────────────────────────────────────────
-   UI STATE MANAGEMENT
-   ──────────────────────────────────────────────────────────────────────────── */
+/* =========================================================================
+   MESSAGES & STATUS
+   ========================================================================= */
+
+function showMessage(msg, type = '') {
+  recorderMessage.textContent = msg;
+  recorderMessage.className   = msg ? `visible ${type}` : '';
+}
 
 function setRecordingState(state) {
   currentState = state;
-
-  // Reset badge classes
   statusBadge.classList.remove('recording', 'paused', 'stopped');
+
+  const idleOrStopped = state === APP_STATE.IDLE || state === APP_STATE.STOPPED;
 
   if (state === APP_STATE.IDLE) {
     statusLabel.textContent = '■ STOPPED';
     statusBadge.classList.add('stopped');
-    btnStart.disabled  = false;
-    btnPause.disabled  = true;
-    btnStop.disabled   = true;
-    btnPause.style.display  = '';
-    btnResume.style.display = 'none';
-
   } else if (state === APP_STATE.RECORDING) {
     statusLabel.textContent = '● RECORDING';
     statusBadge.classList.add('recording');
-    btnStart.disabled  = true;
-    btnPause.disabled  = false;
-    btnStop.disabled   = false;
-    btnPause.style.display  = '';
-    btnResume.style.display = 'none';
-
   } else if (state === APP_STATE.PAUSED) {
     statusLabel.textContent = 'Ⅱ PAUSED';
     statusBadge.classList.add('paused');
-    btnStart.disabled  = true;
-    btnPause.disabled  = true;
-    btnStop.disabled   = false;
-    btnPause.style.display  = 'none';
-    btnResume.style.display = '';
-    btnResume.disabled = false;
-
   } else if (state === APP_STATE.STOPPED) {
     statusLabel.textContent = '■ STOPPED';
     statusBadge.classList.add('stopped');
-    btnStart.disabled  = false;
-    btnPause.disabled  = true;
-    btnStop.disabled   = true;
-    btnPause.style.display  = '';
-    btnResume.style.display = 'none';
-    // Enable transcript buttons if there's content
-    const hasTranscript = transcriptSegments.length > 0;
-    btnCopy.disabled        = !hasTranscript;
-    btnDownloadTxt.disabled = !hasTranscript;
-    btnClear.disabled       = !hasTranscript;
+  }
+
+  btnStart.disabled  = !idleOrStopped;
+  btnPause.disabled  = state !== APP_STATE.RECORDING;
+  btnStop.disabled   = state !== APP_STATE.RECORDING && state !== APP_STATE.PAUSED;
+  btnPause.style.display  = state === APP_STATE.PAUSED ? 'none' : '';
+  btnResume.style.display = state === APP_STATE.PAUSED ? '' : 'none';
+  btnResume.disabled      = state !== APP_STATE.PAUSED;
+
+  if (state === APP_STATE.STOPPED) {
+    const has = transcriptSegments.length > 0;
+    btnCopy.disabled        = !has;
+    btnDownloadTxt.disabled = !has;
+    btnClear.disabled       = !has;
+  }
+
+  updateDiagnostics();
+}
+
+/* =========================================================================
+   INFO PILLS
+   ========================================================================= */
+
+function renderInfoPills(sourceLabel, sourceClass, transcLabel, transcClass) {
+  infoPills.innerHTML = '';
+
+  if (sourceLabel) {
+    const sp = document.createElement('span');
+    sp.className = `pill pill-source ${sourceClass}`;
+    sp.textContent = sourceLabel;
+    infoPills.appendChild(sp);
+  }
+
+  if (transcLabel) {
+    const tp = document.createElement('span');
+    tp.className = `pill pill-transcription ${transcClass}`;
+    tp.textContent = transcLabel;
+    infoPills.appendChild(tp);
   }
 }
 
-function showMicStatus(msg, type = '') {
-  micStatus.textContent = msg;
-  micStatus.className   = 'visible ' + type;
-  if (!msg) micStatus.className = '';
+/* =========================================================================
+   DIAGNOSTICS
+   ========================================================================= */
+
+function bool(val) {
+  const el = document.createElement('span');
+  el.className = val ? 'diag-val yes' : 'diag-val no';
+  el.textContent = val ? 'YES' : 'NO';
+  return el;
 }
 
-function setTranscriptionStatus(msg, type = '') {
-  transcriptionStatus.innerHTML = `<span aria-hidden="true">⬤</span> ${msg}`;
-  transcriptionStatus.className = type;
+function diagText(val) {
+  const el = document.createElement('span');
+  el.className = 'diag-val';
+  el.textContent = val || '—';
+  return el;
 }
 
-/* ────────────────────────────────────────────────────────────────────────────
-   TRANSCRIPT STORE & DOM
-   ──────────────────────────────────────────────────────────────────────────── */
+function diagKey(text) {
+  const el = document.createElement('span');
+  el.className = 'diag-key';
+  el.textContent = text;
+  return el;
+}
 
-/** Append a finalized segment to the store and render it. */
-function appendFinalSegment(text) {
-  text = text.trim();
-  if (!text) return;
+function updateDiagnostics() {
+  const UA          = navigator.userAgent;
+  const browserName = UA.includes('Firefox') ? 'Firefox'
+    : UA.includes('Edg/') ? 'Edge'
+    : UA.includes('OPR/') || UA.includes('Opera') ? 'Opera'
+    : UA.includes('Chrome') ? 'Chrome'
+    : UA.includes('Safari') ? 'Safari'
+    : 'Unknown';
 
-  const ts = getCurrentTimestamp();
-  transcriptSegments.push({ time: ts, text });
+  const mrSupported  = typeof MediaRecorder !== 'undefined';
+  const gdmSupported = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia);
+  const srSupported  = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 
-  // Hide empty placeholders
-  if (captionsEmpty) captionsEmpty.style.display = 'none';
-  if (transcriptEmpty) transcriptEmpty.style.display = 'none';
-
-  // ── Captions box: final text node
-  // We manage the interim span separately — append before it
-  const finalNode = document.createElement('span');
-  finalNode.className = 'ts-text';
-  finalNode.textContent = text + ' ';
-
-  const interimSpan = captionsBox.querySelector('#interim-text');
-  if (interimSpan) {
-    captionsBox.insertBefore(finalNode, interimSpan);
-  } else {
-    captionsBox.appendChild(finalNode);
+  let micPerm = '—';
+  if (navigator.permissions) {
+    navigator.permissions.query({ name: 'microphone' }).then(r => {
+      const el = diagGrid.querySelector('[data-key="mic-perm"]');
+      if (el) el.textContent = r.state;
+    }).catch(() => {});
   }
 
-  // ── Full transcript box
-  const seg = document.createElement('p');
-  seg.className = 'transcript-segment';
+  const mrState = mediaRecorder ? mediaRecorder.state : 'not created';
+  const tracks  = mediaStream ? mediaStream.getAudioTracks().length : 0;
+  const recogState = !srSupported ? 'not supported' : recogRunning ? 'running' : 'stopped';
 
-  if (toggleTimestamps.checked) {
-    const timeEl = document.createElement('span');
-    timeEl.className   = 'ts-time';
-    timeEl.textContent = `[${ts}]`;
-    seg.appendChild(timeEl);
-  }
+  const rows = [
+    ['Browser',                 diagText(browserName)],
+    ['MediaRecorder',           bool(mrSupported)],
+    ['getDisplayMedia',         bool(gdmSupported)],
+    ['SpeechRecognition',       bool(srSupported)],
+    ['Mic permission',          diagText(micPerm)],
+    ['Audio tracks detected',   diagText(String(tracks))],
+    ['Selected source',         diagText(selectedSourceType || 'none')],
+    ['Audio MIME type',         diagText(mimeTypeUsed || '—')],
+    ['MediaRecorder state',     diagText(mrState)],
+    ['Recording state',         diagText(currentState)],
+    ['Transcription state',     diagText(recogState)],
+  ];
 
-  const textEl = document.createElement('span');
-  textEl.className   = 'ts-text';
-  textEl.textContent = text;
-  seg.appendChild(textEl);
-  transcriptBox.appendChild(seg);
-
-  // Enable transcript buttons
-  btnCopy.disabled        = false;
-  btnDownloadTxt.disabled = false;
-  btnClear.disabled       = false;
-
-  autoScroll();
-}
-
-/** Update the interim (in-progress) span in captions — never persisted */
-function setInterimCaption(text) {
-  let span = captionsBox.querySelector('#interim-text');
-  if (!span) {
-    span = document.createElement('span');
-    span.id = 'interim-text';
-    span.setAttribute('aria-hidden', 'true'); // don't read partial text to AT
-    captionsBox.appendChild(span);
-  }
-  span.textContent = text;
-  if (captionsEmpty) captionsEmpty.style.display = 'none';
-  autoScroll();
-}
-
-function clearInterimCaption() {
-  const span = captionsBox.querySelector('#interim-text');
-  if (span) span.textContent = '';
-}
-
-function autoScroll() {
-  if (toggleAutoscroll.checked) {
-    captionsBox.scrollTop  = captionsBox.scrollHeight;
-    transcriptBox.scrollTop = transcriptBox.scrollHeight;
+  diagGrid.innerHTML = '';
+  for (const [key, valEl] of rows) {
+    const k = diagKey(key);
+    valEl.setAttribute('data-key', key.toLowerCase().replace(/\s+/g, '-'));
+    diagGrid.appendChild(k);
+    diagGrid.appendChild(valEl);
   }
 }
 
-/** Build plain text from stored segments */
-function buildTranscriptText() {
-  return transcriptSegments.map(s => {
-    if (toggleTimestamps.checked) {
-      return `[${s.time}] ${s.text}`;
-    }
-    return s.text;
-  }).join('\n\n');
+/* =========================================================================
+   AUDIO SOURCE MODAL
+   ========================================================================= */
+
+function openSourceModal() {
+  sourceModal.classList.remove('hidden');
+  sourceMicBtn.focus();
 }
 
-function clearTranscript() {
-  transcriptSegments.length = 0;
-
-  captionsBox.innerHTML = '';
-  const ce = document.createElement('p');
-  ce.id = 'captions-empty';
-  ce.className = 'captions-empty';
-  ce.textContent = 'Start recording to see live captions.';
-  captionsBox.appendChild(ce);
-
-  transcriptBox.innerHTML = '';
-  const te = document.createElement('p');
-  te.id = 'transcript-empty';
-  te.className = 'transcript-empty';
-  te.textContent = 'Your finalized transcript will appear here.';
-  transcriptBox.appendChild(te);
-
-  btnCopy.disabled        = true;
-  btnDownloadTxt.disabled = true;
-  btnClear.disabled       = true;
+function closeSourceModal() {
+  sourceModal.classList.add('hidden');
 }
 
-/* ────────────────────────────────────────────────────────────────────────────
-   SPEECH RECOGNITION
-   ──────────────────────────────────────────────────────────────────────────── */
+modalCancel.addEventListener('click', () => {
+  closeSourceModal();
+  btnStart.disabled = false;
+});
 
-const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+sourceModal.addEventListener('click', e => {
+  if (e.target === sourceModal) {
+    closeSourceModal();
+    btnStart.disabled = false;
+  }
+});
 
-if (!SpeechRecognitionAPI) {
-  recogEnabled = false;
-  setTranscriptionStatus('Live captions not supported in this browser', 'unsupported');
+sourceMicBtn.addEventListener('click', () => {
+  closeSourceModal();
+  beginRecording('microphone');
+});
+
+sourceTabBtn.addEventListener('click', () => {
+  closeSourceModal();
+  beginRecording('tab');
+});
+
+/* =========================================================================
+   MEDIA RECORDER SETUP
+   ========================================================================= */
+
+function getBestMimeType() {
+  const candidates = [
+    'audio/webm;codecs=opus',
+    'audio/webm',
+    'audio/ogg;codecs=opus',
+    'audio/ogg',
+    'audio/mp4',
+    ''
+  ];
+  for (const mime of candidates) {
+    if (!mime || MediaRecorder.isTypeSupported(mime)) return mime;
+  }
+  return '';
+}
+
+function extFromMime(mime) {
+  if (mime.includes('ogg')) return 'ogg';
+  if (mime.includes('mp4')) return 'mp4';
+  return 'webm';
+}
+
+function dateStamp() {
+  const d = new Date();
+  const p = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}-${p(d.getHours())}-${p(d.getMinutes())}`;
 }
 
 /**
- * Build and configure a SpeechRecognition instance.
- * We create a fresh one each time because some browsers don't
- * allow .start() to be called again after an error/end event.
+ * Acquire the media stream based on chosen source type.
+ * Returns { stream, sourceType } or throws.
  */
+async function acquireStream(sourceType) {
+  if (sourceType === 'microphone') {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    return { stream, sourceType: 'microphone' };
+  }
+
+  if (sourceType === 'tab') {
+    // getDisplayMedia must request video:true even if we only want audio —
+    // some browsers require it. We then drop the video tracks after.
+    const stream = await navigator.mediaDevices.getDisplayMedia({
+      video: true,
+      audio: {
+        echoCancellation: false,
+        noiseSuppression: false,
+        sampleRate: 44100
+      }
+    });
+    return { stream, sourceType: 'tab' };
+  }
+
+  throw new Error('Unknown source type: ' + sourceType);
+}
+
+function setupMediaRecorderFromStream(stream) {
+  const mime = getBestMimeType();
+  mimeTypeUsed = mime;
+  const opts  = mime ? { mimeType: mime } : {};
+
+  // If recording a tab, drop video tracks to save resources (keep audio)
+  const videoTracks = stream.getVideoTracks();
+  videoTracks.forEach(t => t.stop());
+
+  // Build an audio-only stream for MediaRecorder
+  const audioTracks = stream.getAudioTracks();
+  const audioStream = new MediaStream(audioTracks);
+
+  const mr = new MediaRecorder(audioStream, opts);
+
+  mr.ondataavailable = event => {
+    if (event.data && event.data.size > 0) audioChunks.push(event.data);
+  };
+
+  mr.onstop = () => {
+    const finalMime = mr.mimeType || 'audio/webm';
+    mimeTypeUsed    = finalMime;
+    audioBlob = new Blob(audioChunks, { type: finalMime });
+
+    if (audioObjectURL) URL.revokeObjectURL(audioObjectURL);
+    audioObjectURL = URL.createObjectURL(audioBlob);
+
+    audioPlayer.src = audioObjectURL;
+    playbackSection.style.display = '';
+
+    btnDownloadAudio.onclick = () => {
+      const ext      = extFromMime(finalMime);
+      const filename = `lecture-${dateStamp()}.${ext}`;
+      const a = Object.assign(document.createElement('a'), {
+        href: audioObjectURL, download: filename
+      });
+      a.click();
+    };
+    updateDiagnostics();
+  };
+
+  return mr;
+}
+
+/* =========================================================================
+   TRACK ENDED (user stops sharing tab)
+   ========================================================================= */
+
+function onTrackEnded() {
+  if (currentState !== APP_STATE.RECORDING && currentState !== APP_STATE.PAUSED) return;
+
+  showMessage('⚠ Audio sharing ended — the shared tab was closed or sharing was stopped.', 'warn');
+  stopEverything(false);
+}
+
+function attachTrackEndedListeners(stream) {
+  stream.getAudioTracks().forEach(track => {
+    track.addEventListener('ended', onTrackEnded);
+  });
+}
+
+/* =========================================================================
+   BEGIN RECORDING — called after source chosen
+   ========================================================================= */
+
+async function beginRecording(sourceType) {
+  selectedSourceType = sourceType;
+  showMessage('Requesting permission…', 'info');
+  btnStart.disabled = true;
+
+  let stream;
+  try {
+    const result = await acquireStream(sourceType);
+    stream = result.stream;
+  } catch (err) {
+    let msg;
+    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+      msg = sourceType === 'tab'
+        ? 'Permission denied. You must allow screen sharing and select a tab.'
+        : 'Microphone permission denied. Please allow access and try again.';
+    } else if (err.name === 'NotFoundError') {
+      msg = 'No microphone found. Please connect one and try again.';
+    } else if (err.name === 'AbortError' || err.message.includes('cancel')) {
+      msg = 'Screen sharing was cancelled. Click Start Recording to try again.';
+    } else {
+      msg = `Could not get audio: ${err.message}`;
+    }
+    showMessage(msg, 'error');
+    btnStart.disabled = false;
+    selectedSourceType = null;
+    return;
+  }
+
+  // Verify audio tracks
+  const audioTracks = stream.getAudioTracks();
+  if (audioTracks.length === 0) {
+    stream.getTracks().forEach(t => t.stop());
+    if (sourceType === 'tab') {
+      showMessage(
+        '✕ No audio was received from the selected source. Please select your class tab and make sure "Share audio" is enabled in the browser picker.',
+        'error'
+      );
+    } else {
+      showMessage('✕ No audio track detected from microphone. Please check your microphone.', 'error');
+    }
+    btnStart.disabled = false;
+    selectedSourceType = null;
+    return;
+  }
+
+  showMessage(`✓ Audio track detected (${audioTracks.length} track${audioTracks.length > 1 ? 's' : ''})`, 'ok');
+  setTimeout(() => showMessage(''), 2500);
+
+  mediaStream   = stream;
+  mediaRecorder = setupMediaRecorderFromStream(stream);
+
+  // Listen for the user stopping screen-share from the browser's share bar
+  attachTrackEndedListeners(stream);
+
+  // Begin recording, collect chunks every 5s
+  audioChunks = [];
+  mediaRecorder.start(5000);
+
+  // Timer
+  resetTimer();
+  startTimer();
+
+  // Transcription — always uses microphone via Web Speech API
+  setupAndStartTranscription();
+
+  // Update UI
+  const sourceLabel   = sourceType === 'tab' ? '🖥 Tab Audio Captured' : '🎤 Microphone';
+  const sourceCls     = sourceType === 'tab' ? 'tab' : '';
+
+  renderInfoPills(sourceLabel, sourceCls, recogEnabled ? '⬤ Transcription: Starting…' : '⬤ Transcription: Unavailable', recogEnabled ? '' : 'error');
+
+  if (sourceType === 'tab') {
+    transcriptionNotice.style.display = '';
+    transcriptionNotice.innerHTML = `
+      <strong>ℹ Transcription note:</strong> The Web Speech API listens to your <em>microphone</em>, not the captured tab audio.
+      Your recording will contain the teacher's voice from the tab, but live captions reflect what the browser's speech recognition hears (your mic).
+      For tab-audio transcription, a backend API like Whisper would be needed.
+    `;
+  } else {
+    transcriptionNotice.style.display = 'none';
+  }
+
+  setRecordingState(APP_STATE.RECORDING);
+}
+
+/* =========================================================================
+   SPEECH RECOGNITION
+   ========================================================================= */
+
+const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+
 function buildRecognition() {
   if (!recogEnabled) return null;
-
   const r = new SpeechRecognitionAPI();
-  r.continuous    = true;
-  r.interimResults = true;
+  r.continuous      = true;
+  r.interimResults  = true;
   r.maxAlternatives = 1;
-  r.lang          = langSelect.value;
+  r.lang            = langSelect.value;
 
   r.onstart = () => {
     recogRunning = true;
-    setTranscriptionStatus('Transcribing…', 'active');
+    updateTranscriptionPill('⬤ Transcription: Connected', 'active');
   };
 
   r.onresult = event => {
-    let interimText = '';
-
+    let interim = '';
     for (let i = event.resultIndex; i < event.results.length; i++) {
-      const result    = event.results[i];
-      const transcript = result[0].transcript;
-
-      if (result.isFinal) {
-        appendFinalSegment(transcript);
+      const res = event.results[i];
+      if (res.isFinal) {
+        appendFinalSegment(res[0].transcript);
       } else {
-        interimText += transcript;
+        interim += res[0].transcript;
       }
     }
-
-    setInterimCaption(interimText);
+    setInterimCaption(interim);
   };
 
   r.onerror = event => {
-    // 'no-speech' is not fatal — just silence
     if (event.error === 'no-speech') return;
     if (event.error === 'aborted')   return;
-    setTranscriptionStatus('Reconnecting…', 'error');
+    updateTranscriptionPill('⬤ Transcription: Reconnecting…', 'error');
     scheduleRecogRestart();
   };
 
   r.onend = () => {
     recogRunning = false;
     clearInterimCaption();
-
-    // If we're still in RECORDING state, auto-restart recognition
     if (currentState === APP_STATE.RECORDING) {
       scheduleRecogRestart();
     } else {
-      setTranscriptionStatus('Transcription stopped', '');
+      updateTranscriptionPill('⬤ Transcription: Stopped', '');
     }
   };
 
   return r;
 }
 
-/**
- * Start speech recognition.
- * Safe to call even if already running (will be a no-op).
- */
+function setupAndStartTranscription() {
+  if (!recogEnabled) {
+    updateTranscriptionPill('⬤ Transcription: Not supported in this browser', 'error');
+    return;
+  }
+  startRecognition();
+}
+
 function startRecognition() {
-  if (!recogEnabled) return;
-  if (recogRunning) return;
-
+  if (!recogEnabled || recogRunning) return;
   clearTimeout(recogRestartTimeout);
-
   try {
     recognition = buildRecognition();
     if (recognition) recognition.start();
   } catch (e) {
-    console.warn('[Transcription] start() error:', e);
+    console.warn('[SR] start() failed:', e);
     scheduleRecogRestart();
   }
 }
 
-function scheduleRecogRestart(delayMs = 1200) {
+function scheduleRecogRestart(ms = 1200) {
   clearTimeout(recogRestartTimeout);
   if (currentState !== APP_STATE.RECORDING) return;
   recogRestartTimeout = setTimeout(() => {
     if (currentState === APP_STATE.RECORDING && !recogRunning) {
       startRecognition();
     }
-  }, delayMs);
+  }, ms);
 }
 
 function stopRecognition() {
@@ -1069,232 +1434,210 @@ function stopRecognition() {
   clearInterimCaption();
 }
 
-/* ────────────────────────────────────────────────────────────────────────────
-   AUDIO RECORDING
-   ──────────────────────────────────────────────────────────────────────────── */
-
-/** Find the best supported MIME type for this browser. */
-function getBestMimeType() {
-  const candidates = [
-    'audio/webm;codecs=opus',
-    'audio/webm',
-    'audio/ogg;codecs=opus',
-    'audio/ogg',
-    'audio/mp4',
-    ''  // empty string = browser default
-  ];
-  for (const mime of candidates) {
-    if (!mime || MediaRecorder.isTypeSupported(mime)) return mime;
-  }
-  return '';
-}
-
-/** Derive file extension from mime type string. */
-function extFromMime(mime) {
-  if (mime.includes('ogg'))  return 'ogg';
-  if (mime.includes('mp4'))  return 'mp4';
-  return 'webm';
-}
-
-function dateStamp() {
-  const d = new Date();
-  const pad = n => String(n).padStart(2,'0');
-  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}-${pad(d.getHours())}-${pad(d.getMinutes())}`;
-}
-
-/** Request mic access and prepare MediaRecorder. */
-async function setupMediaRecorder() {
-  try {
-    showMicStatus('Requesting microphone access…', 'warn');
-
-    mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-
-    showMicStatus('Microphone connected.', 'ok');
-    setTimeout(() => showMicStatus(''), 3000);
-
-    const mimeType = getBestMimeType();
-    const opts     = mimeType ? { mimeType } : {};
-
-    mediaRecorder = new MediaRecorder(mediaStream, opts);
-
-    // ── Collect chunks incrementally so long recordings don't need one huge buffer
-    mediaRecorder.ondataavailable = event => {
-      if (event.data && event.data.size > 0) {
-        audioChunks.push(event.data);
-      }
-    };
-
-    mediaRecorder.onstop = () => {
-      // Finalize blob
-      const mime = mediaRecorder.mimeType || 'audio/webm';
-      audioBlob = new Blob(audioChunks, { type: mime });
-
-      // Release previous object URL if any
-      if (audioObjectURL) URL.revokeObjectURL(audioObjectURL);
-      audioObjectURL = URL.createObjectURL(audioBlob);
-
-      // Set up playback
-      audioPlayer.src = audioObjectURL;
-      playbackSection.style.display = '';
-
-      // Wire download button
-      btnDownloadAudio.onclick = () => {
-        const ext      = extFromMime(mime);
-        const filename = `lecture-${dateStamp()}.${ext}`;
-        const a = document.createElement('a');
-        a.href     = audioObjectURL;
-        a.download = filename;
-        a.click();
-      };
-    };
-
-    return true;
-
-  } catch (err) {
-    let msg = 'Microphone error: ' + err.message;
-    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-      msg = 'Microphone permission denied. Please allow access and try again.';
-    } else if (err.name === 'NotFoundError') {
-      msg = 'No microphone found. Please connect one and try again.';
-    }
-    showMicStatus(msg, 'error');
-    return false;
+function updateTranscriptionPill(label, cls) {
+  const pill = infoPills.querySelector('.pill-transcription');
+  if (pill) {
+    pill.textContent = label;
+    pill.className   = `pill pill-transcription ${cls}`;
   }
 }
 
-/* ────────────────────────────────────────────────────────────────────────────
-   BUTTON HANDLERS
-   ──────────────────────────────────────────────────────────────────────────── */
+/* =========================================================================
+   TRANSCRIPT DOM
+   ========================================================================= */
 
-btnStart.addEventListener('click', async () => {
-  // Check browser support
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    showMicStatus('Your browser does not support microphone access. Please use Chrome, Edge, or Firefox.', 'error');
-    return;
-  }
-  if (typeof MediaRecorder === 'undefined') {
-    showMicStatus('Your browser does not support MediaRecorder. Please use a modern browser.', 'error');
-    return;
-  }
+function appendFinalSegment(text) {
+  text = text.trim();
+  if (!text) return;
 
-  btnStart.disabled = true;
+  const ts = getCurrentTimestamp();
+  transcriptSegments.push({ time: ts, text });
 
-  // Reset state from any prior session
-  audioChunks = [];
-  audioBlob   = null;
-  playbackSection.style.display = 'none';
-  audioPlayer.src = '';
+  const ce = document.getElementById('captions-empty');
+  if (ce) ce.style.display = 'none';
+  const te = document.getElementById('transcript-empty');
+  if (te) te.style.display = 'none';
 
-  const ok = await setupMediaRecorder();
-  if (!ok) {
-    btnStart.disabled = false;
-    return;
+  // Captions — final node before interim span
+  const finalNode = document.createElement('span');
+  finalNode.className   = 'ts-text';
+  finalNode.textContent = text + ' ';
+  const interimSpan = captionsBox.querySelector('#interim-text');
+  if (interimSpan) {
+    captionsBox.insertBefore(finalNode, interimSpan);
+  } else {
+    captionsBox.appendChild(finalNode);
   }
 
-  // ── Start audio recording; collect a chunk every 5 seconds
-  mediaRecorder.start(5000);
-
-  // ── Start timer
-  resetTimer();
-  startTimer();
-
-  // ── Start transcription
-  if (recogEnabled) {
-    setTranscriptionStatus('Starting…', '');
-    startRecognition();
+  // Full transcript
+  const seg = document.createElement('p');
+  seg.className = 'transcript-segment';
+  if (toggleTimestamps.checked) {
+    const timeEl = Object.assign(document.createElement('span'), {
+      className: 'ts-time', textContent: `[${ts}]`
+    });
+    seg.appendChild(timeEl);
   }
+  seg.appendChild(Object.assign(document.createElement('span'), {
+    className: 'ts-text', textContent: text
+  }));
+  transcriptBox.appendChild(seg);
 
-  setRecordingState(APP_STATE.RECORDING);
-});
+  btnCopy.disabled = btnDownloadTxt.disabled = btnClear.disabled = false;
+  autoScroll();
+}
 
-btnPause.addEventListener('click', () => {
-  if (currentState !== APP_STATE.RECORDING) return;
-
-  // Pause MediaRecorder (buffers already-collected chunks)
-  if (mediaRecorder && mediaRecorder.state === 'recording') {
-    mediaRecorder.pause();
+function setInterimCaption(text) {
+  let span = captionsBox.querySelector('#interim-text');
+  if (!span) {
+    span = Object.assign(document.createElement('span'), { id: 'interim-text' });
+    span.setAttribute('aria-hidden', 'true');
+    captionsBox.appendChild(span);
   }
+  span.textContent = text;
+  const ce = document.getElementById('captions-empty');
+  if (ce && text) ce.style.display = 'none';
+  autoScroll();
+}
 
-  pauseTimer();
-  stopRecognition();
-  setTranscriptionStatus('Paused', '');
+function clearInterimCaption() {
+  const span = captionsBox.querySelector('#interim-text');
+  if (span) span.textContent = '';
+}
 
-  setRecordingState(APP_STATE.PAUSED);
-});
+function autoScroll() {
+  if (!toggleAutoscroll.checked) return;
+  captionsBox.scrollTop   = captionsBox.scrollHeight;
+  transcriptBox.scrollTop = transcriptBox.scrollHeight;
+}
 
-btnResume.addEventListener('click', () => {
-  if (currentState !== APP_STATE.PAUSED) return;
+function buildTranscriptText() {
+  return transcriptSegments.map(s =>
+    toggleTimestamps.checked ? `[${s.time}] ${s.text}` : s.text
+  ).join('\n\n');
+}
 
-  if (mediaRecorder && mediaRecorder.state === 'paused') {
-    mediaRecorder.resume();
-  }
+function clearTranscript() {
+  transcriptSegments.length = 0;
 
-  startTimer();
-  setRecordingState(APP_STATE.RECORDING);
+  captionsBox.innerHTML = '';
+  captionsBox.appendChild(Object.assign(document.createElement('p'), {
+    id: 'captions-empty', className: 'captions-empty',
+    textContent: 'Start recording to see live captions.'
+  }));
 
-  if (recogEnabled) {
-    startRecognition();
-  }
-});
+  transcriptBox.innerHTML = '';
+  transcriptBox.appendChild(Object.assign(document.createElement('p'), {
+    id: 'transcript-empty', className: 'transcript-empty',
+    textContent: 'Finalized transcript appears here.'
+  }));
 
-btnStop.addEventListener('click', () => {
-  if (currentState !== APP_STATE.RECORDING && currentState !== APP_STATE.PAUSED) return;
+  btnCopy.disabled = btnDownloadTxt.disabled = btnClear.disabled = true;
+}
 
+/* =========================================================================
+   STOP EVERYTHING (shared by stop button and track-ended event)
+   ========================================================================= */
+
+function stopEverything(manual = true) {
   stopRecognition();
   stopTimer();
 
-  // Stop MediaRecorder — this triggers onstop which finalizes the blob
   if (mediaRecorder && mediaRecorder.state !== 'inactive') {
     mediaRecorder.stop();
   }
 
-  // Release microphone tracks
   if (mediaStream) {
     mediaStream.getTracks().forEach(t => t.stop());
     mediaStream = null;
   }
 
-  setTranscriptionStatus('Stopped', '');
+  updateTranscriptionPill('⬤ Transcription: Stopped', '');
   setRecordingState(APP_STATE.STOPPED);
+
+  if (!manual) {
+    showMessage('Recording stopped because audio sharing ended.', 'warn');
+  }
+}
+
+/* =========================================================================
+   BUTTON HANDLERS
+   ========================================================================= */
+
+btnStart.addEventListener('click', () => {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showMessage('Your browser does not support audio recording. Please use Chrome, Edge, or Firefox.', 'error');
+    return;
+  }
+  if (typeof MediaRecorder === 'undefined') {
+    showMessage('MediaRecorder not supported. Please use a modern browser.', 'error');
+    return;
+  }
+
+  // Reset from any prior session
+  audioChunks = [];
+  audioBlob   = null;
+  playbackSection.style.display = 'none';
+  audioPlayer.src = '';
+  infoPills.innerHTML = '';
+  showMessage('');
+  transcriptionNotice.style.display = 'none';
+
+  btnStart.disabled = true;
+  openSourceModal();
 });
 
-/* ────────────────────────────────────────────────────────────────────────────
-   TRANSCRIPT BUTTONS
-   ──────────────────────────────────────────────────────────────────────────── */
+btnPause.addEventListener('click', () => {
+  if (currentState !== APP_STATE.RECORDING) return;
+  if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.pause();
+  pauseTimer();
+  stopRecognition();
+  updateTranscriptionPill('⬤ Transcription: Paused', '');
+  setRecordingState(APP_STATE.PAUSED);
+});
+
+btnResume.addEventListener('click', () => {
+  if (currentState !== APP_STATE.PAUSED) return;
+  if (mediaRecorder && mediaRecorder.state === 'paused') mediaRecorder.resume();
+  startTimer();
+  setRecordingState(APP_STATE.RECORDING);
+  if (recogEnabled) startRecognition();
+});
+
+btnStop.addEventListener('click', () => {
+  if (currentState !== APP_STATE.RECORDING && currentState !== APP_STATE.PAUSED) return;
+  stopEverything(true);
+});
+
+/* ─── Transcript buttons ─── */
 
 btnCopy.addEventListener('click', async () => {
   const text = buildTranscriptText();
   if (!text) return;
-
   try {
     await navigator.clipboard.writeText(text);
-    copyFeedback.classList.add('show');
-    setTimeout(() => copyFeedback.classList.remove('show'), 2500);
-  } catch (err) {
-    // Fallback for environments where clipboard API needs a gesture
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
+  } catch (_) {
+    const ta = Object.assign(document.createElement('textarea'), {
+      value: text,
+      style: 'position:fixed;opacity:0;pointer-events:none'
+    });
     document.body.appendChild(ta);
     ta.select();
     document.execCommand('copy');
     document.body.removeChild(ta);
-    copyFeedback.classList.add('show');
-    setTimeout(() => copyFeedback.classList.remove('show'), 2500);
   }
+  copyFeedback.classList.add('show');
+  setTimeout(() => copyFeedback.classList.remove('show'), 2500);
 });
 
 btnDownloadTxt.addEventListener('click', () => {
   const text = buildTranscriptText();
   if (!text) return;
-
-  const filename = `lecture-transcript-${dateStamp()}.txt`;
   const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
   const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
-  a.download = filename;
-  a.click();
+  Object.assign(document.createElement('a'), {
+    href: url, download: `lecture-transcript-${dateStamp()}.txt`
+  }).click();
   setTimeout(() => URL.revokeObjectURL(url), 10000);
 });
 
@@ -1303,62 +1646,38 @@ btnClear.addEventListener('click', () => {
   clearTranscript();
 });
 
-/* ────────────────────────────────────────────────────────────────────────────
-   LANGUAGE CHANGE while recording — restart recognition with new lang
-   ──────────────────────────────────────────────────────────────────────────── */
-
-langSelect.addEventListener('change', () => {
-  saveSettings();
-  if (currentState === APP_STATE.RECORDING && recogEnabled) {
-    stopRecognition();
-    startRecognition();
-  }
-});
-
-/* ────────────────────────────────────────────────────────────────────────────
-   PAGE CLEANUP — stop mic if user navigates away mid-recording
-   ──────────────────────────────────────────────────────────────────────────── */
+/* =========================================================================
+   PAGE CLEANUP
+   ========================================================================= */
 
 window.addEventListener('beforeunload', e => {
   if (currentState === APP_STATE.RECORDING || currentState === APP_STATE.PAUSED) {
     stopRecognition();
-    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-      mediaRecorder.stop();
-    }
-    if (mediaStream) {
-      mediaStream.getTracks().forEach(t => t.stop());
-    }
-    // Prompt user to confirm they want to leave
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+    if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
     e.preventDefault();
     e.returnValue = '';
   }
-
-  // Clean up object URL
-  if (audioObjectURL) {
-    URL.revokeObjectURL(audioObjectURL);
-  }
+  if (audioObjectURL) URL.revokeObjectURL(audioObjectURL);
 });
 
-/* ────────────────────────────────────────────────────────────────────────────
-   INITIALISE
-   ──────────────────────────────────────────────────────────────────────────── */
+/* =========================================================================
+   INIT
+   ========================================================================= */
 
 loadSettings();
 setRecordingState(APP_STATE.IDLE);
+updateDiagnostics();
+
+// Refresh diagnostics when diagnostics panel is opened
+$('diagnostics-panel').addEventListener('toggle', updateDiagnostics);
 
 if (!recogEnabled) {
-  // Already set above, but ensure it's visible on load
-  setTranscriptionStatus('Live captions unavailable — try Chrome or Edge', 'unsupported');
-} else {
-  setTranscriptionStatus('Ready to transcribe', '');
+  renderInfoPills('', '', '⬤ Live captions unavailable — try Chrome or Edge', 'error');
 }
 
 if (!navigator.mediaDevices || typeof MediaRecorder === 'undefined') {
-  showMicStatus(
-    'Audio recording is not supported in this browser. Please use Chrome, Edge, or Firefox.',
-    'error'
-  );
-  showMicStatus.style && (showMicStatus.style.display = 'block');
+  showMessage('Audio recording is not supported in this browser. Please use Chrome, Edge, or Firefox.', 'error');
   btnStart.disabled = true;
 }
 </script>
